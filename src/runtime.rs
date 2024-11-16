@@ -1,5 +1,9 @@
+#![allow(unexpected_cfgs)]
+
 use std::time::{Duration, Instant};
 use tokio::runtime;
+
+use serde::Serialize;
 
 #[cfg(any(docsrs, all(tokio_unstable, feature = "rt")))]
 #[cfg_attr(docsrs, doc(cfg(all(tokio_unstable, feature = "rt"))))]
@@ -54,7 +58,7 @@ pub struct RuntimeMonitor {
 #[cfg_attr(docsrs, doc(cfg(all(tokio_unstable, feature = "rt"))))]
 /// Key runtime metrics.
 #[non_exhaustive]
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Serialize)]
 pub struct RuntimeMetrics {
     /// The number of worker threads used by the runtime.
     ///
@@ -297,7 +301,7 @@ pub struct RuntimeMetrics {
     ///     let mut next_interval = || intervals.next().unwrap();
     ///
     ///     assert_eq!(next_interval().total_park_count, 0);
-    ///     
+    ///
     ///     async {
     ///         tokio::time::sleep(std::time::Duration::from_millis(1)).await;
     ///     }.await;
@@ -316,7 +320,7 @@ pub struct RuntimeMetrics {
     ///     let mut next_interval = || intervals.next().unwrap();
     ///
     ///     assert_eq!(next_interval().total_noop_count, 0);
-    ///     
+    ///
     ///     async {
     ///         tokio::time::sleep(std::time::Duration::from_millis(1)).await;
     ///     }.await;
@@ -400,7 +404,7 @@ pub struct RuntimeMetrics {
     ///         }).await.unwrap();
     ///         flush_metrics().await;
     ///     }.await;
-    ///     
+    ///
     ///     let interval = { flush_metrics().await; next_interval() }; // end of interval 2
     ///     println!("total={}; min={}; max={}", interval.total_steal_count, interval.min_steal_count, interval.max_steal_count);
     ///
@@ -840,7 +844,7 @@ pub struct RuntimeMetrics {
     ///         .enable_all()
     ///         .build()
     ///         .unwrap();
-    ///     
+    ///
     ///     let handle = rt.handle();
     ///     let monitor = tokio_metrics::RuntimeMonitor::new(&handle);
     ///     let mut intervals = monitor.intervals();
@@ -895,7 +899,7 @@ pub struct RuntimeMetrics {
     ///         .enable_all()
     ///         .build()
     ///         .unwrap();
-    ///     
+    ///
     ///     let handle = rt.handle();
     ///     let monitor = tokio_metrics::RuntimeMonitor::new(&handle);
     ///     let mut intervals = monitor.intervals();
@@ -1406,7 +1410,7 @@ impl Worker {
 
             metrics.mean_poll_duration = Duration::from_nanos(mean as u64);
         }
-        
+
         // Update the histogram counts if there were polls since last count
         if worker_polls_count > 0 {
             for (bucket, cell) in metrics.poll_time_histogram.iter_mut().enumerate() {
