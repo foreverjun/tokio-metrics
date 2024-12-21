@@ -119,10 +119,14 @@ macro_rules! cfg_rt {
 
 cfg_rt! {
     mod runtime;
+    mod serializer;
     pub use runtime::{
         RuntimeIntervals,
         RuntimeMetrics,
         RuntimeMonitor,
+    };
+    pub use serializer::{
+        MetricsSerializable
     };
 }
 
